@@ -1,0 +1,59 @@
+# =======================
+# Gradle & Build Files
+# =======================
+.gradle/
+build/
+output-metadata.json
+
+# =======================
+# Local Config
+# =======================
+local.properties
+
+# =======================
+# Logs & Dumps
+# =======================
+*.log
+*.hprof
+
+# =======================
+# Android Studio / IntelliJ
+# =======================
+*.iml
+.idea/
+.DS_Store
+
+# Optional IntelliJ files
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+
+# =======================
+# Native Build
+# =======================
+.externalNativeBuild/
+.cxx/
+
+# =======================
+# Generated Files
+# =======================
+captures/
+*.apk
+*.aab
+
+# =======================
+# Keystore Files (Sensitive)
+# =======================
+*.jks
+*.keystore
+
+# =======================
+# Google Services (Sensitive)
+# =======================
+google-services.json
