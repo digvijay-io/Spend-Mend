@@ -28,7 +28,7 @@ fun SpendMendApp() {
         composable("signup") { SignupScreen(navController) }
         composable("otp") { PhoneAuthScreen(navController) }
         composable("verifyotp") { OtpVerificationScreen(navController) }
-        composable("home") { HomeScreen() }
+        composable("home") { MainBottomNavScreen() }
         composable("success") { Onboarding(navController) }
     }
 }
