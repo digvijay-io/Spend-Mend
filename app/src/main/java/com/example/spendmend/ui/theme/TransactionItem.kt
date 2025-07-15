@@ -6,7 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.spendmend.Transaction
+import com.example.spendmend.data.Transaction
 
 @Composable
 fun TransactionItem(transaction: Transaction) {

@@ -1,4 +1,4 @@
-package com.example.spendmend
+package com.example.spendmend.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -12,5 +12,3 @@ data class Transaction(
     val merchant: String,
     val transactionType: String
 )
-
-
