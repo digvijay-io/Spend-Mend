@@ -10,5 +10,7 @@ data class Transaction(
     val description: String,
     val date: String,
     val merchant: String,
-    val transactionType: String
+    val transactionType: String, // e.g., "Expense" or "Income"
+    val category: String = "Other"
 )
+

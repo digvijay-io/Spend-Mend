@@ -10,10 +10,21 @@ object SmsParser {
         val date = dateRegex.find(message)?.groups?.get(1)?.value ?: ""
         val merchant = merchantRegex.find(message)?.groups?.get(1)?.value?.trim() ?: "Unknown"
 
+        // Detect transaction type
         val type = when {
-            message.contains("debited", true) -> "Debit"
-            message.contains("credited", true) -> "Credit"
+            message.contains("debited", true) -> "Expense" // ✅ Changed from Debit
+            message.contains("credited", true) || message.contains("received", true) -> "Income"
             else -> "Info"
+        }
+
+        // Detect category
+        val category = when {
+            merchant.contains("zomato", true) || merchant.contains("swiggy", true) -> "Food"
+            merchant.contains("ixigo", true) || merchant.contains("rapido", true) -> "Travel"
+            merchant.contains("jio", true) || merchant.contains("airtel", true) -> "Bills"
+            merchant.contains("amazon", true) || merchant.contains("flipkart", true) -> "Shopping"
+            message.contains("salary", true) || message.contains("credited", true) -> "Income"
+            else -> "Other"
         }
 
         return amount?.let {
@@ -22,7 +33,8 @@ object SmsParser {
                 description = message,
                 date = date,
                 merchant = merchant,
-                transactionType = type
+                transactionType = type,
+                category = category // ✅ FIXED
             )
         }
     }

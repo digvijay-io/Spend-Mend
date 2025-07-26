@@ -23,8 +23,10 @@ import androidx.navigation.NavController
 import com.example.spendmend.R
 import com.google.firebase.auth.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignIn.*
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions.*
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -36,9 +38,9 @@ fun LoginScreen(navController: NavController) {
 
     // Google Sign-In
     val googleSignInClient = remember {
-        GoogleSignIn.getClient(
+        getClient(
             context,
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            Builder(DEFAULT_SIGN_IN)
                 .requestIdToken(context.getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
@@ -49,7 +51,7 @@ fun LoginScreen(navController: NavController) {
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            val task = getSignedInAccountFromIntent(result.data)
             val account = task.result
             if (account != null) {
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
