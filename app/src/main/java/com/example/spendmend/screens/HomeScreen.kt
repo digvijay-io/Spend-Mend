@@ -135,9 +135,9 @@ fun HomeScreen(viewModel: TransactionViewModel = viewModel()) {
     }
 
     // TODO DUmmy vuttion
-    Button(onClick = { viewModel.insertDummyTransactions() }) {
-        Text("Add Dummy Data")
-    }
+//    Button(onClick = { viewModel.insertDummyTransactions() }) {
+//        Text("Add Dummy Data")
+//    }
 
 }
 
