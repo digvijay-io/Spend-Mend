@@ -9,6 +9,7 @@ import com.example.spendmend.data.TransactionDao
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
+
 class TransactionViewModel(application: Application) : AndroidViewModel(application) {
     private val dao = AppDatabase.getDatabase(application).transactionDao()
 
@@ -54,5 +55,4 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
             dummyList.forEach { dao.insert(it) }
         }
     }
-
 }

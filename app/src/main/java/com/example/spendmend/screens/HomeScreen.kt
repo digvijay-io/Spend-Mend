@@ -20,11 +20,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.* // Navigation
-
 import com.example.spendmend.data.Transaction
 import com.example.spendmend.ui.theme.TransactionItem
+import com.example.spendmend.screens.TransactionViewModel
 
 // -----------------------------
 // Bottom Navigation Destinations
@@ -88,7 +87,9 @@ fun MainBottomNavScreen() {
             startDestination = Screen.Home.route,
             modifier = Modifier.padding(padding)
         ) {
-            composable(Screen.Home.route) { HomeScreen() }
+            composable(Screen.Home.route) {
+                HomeScreen()
+            }
             composable(Screen.Insights.route) { InsightsScreen() }
             composable(Screen.Notifications.route) { PlaceholderScreen("Notifications") }
             composable(Screen.Settings.route) { PlaceholderScreen("Settings") }
@@ -97,11 +98,16 @@ fun MainBottomNavScreen() {
 }
 
 // -----------------------------
-// Home Screen – Transaction List & SMS Permission
+// Home Screen – Transaction List & Income Logic
 // -----------------------------
 @Composable
-fun HomeScreen(viewModel: TransactionViewModel = viewModel()) {
+fun HomeScreen(
+    transactionViewModel: TransactionViewModel = viewModel(),
+    incomeViewModel: IncomeViewModel = viewModel()
+) {
     val context = LocalContext.current
+
+    // SMS permission launcher
     val smsPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -114,7 +120,43 @@ fun HomeScreen(viewModel: TransactionViewModel = viewModel()) {
         smsPermissionLauncher.launch(Manifest.permission.RECEIVE_SMS)
     }
 
-    val transactions = viewModel.transactions.collectAsState().value
+    // State
+    // At the top of your composable
+    val income by incomeViewModel.income.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
+
+// Load income once
+    LaunchedEffect(Unit) {
+        incomeViewModel.loadIncome(context)
+    }
+
+// Show dialog if income is not set
+    LaunchedEffect(income) {
+        if (income <= 0.0) {
+            showDialog = true
+        }
+    }
+
+// Show the income input dialog
+    if (showDialog) {
+        IncomeDialog(
+            onDismiss = { showDialog = false },
+            onSave = { amount ->
+                incomeViewModel.saveIncome(context, amount)
+                showDialog = false
+            }
+        )
+    }
+
+    // Expenses
+    val totalExpense = transactionViewModel.totalExpense.collectAsState().value
+    val transactions = transactionViewModel.transactions.collectAsState().value
+
+    LaunchedEffect(totalExpense, income) {
+        if (income > 0 && totalExpense > income) {
+            Toast.makeText(context, "Warning: Expenses exceed your monthly income!", Toast.LENGTH_LONG).show()
+        }
+    }
 
     if (transactions.isEmpty()) {
         Box(
@@ -134,45 +176,17 @@ fun HomeScreen(viewModel: TransactionViewModel = viewModel()) {
         }
     }
 
-    // TODO DUmmy vuttion
-//    Button(onClick = { viewModel.insertDummyTransactions() }) {
-//        Text("Add Dummy Data")
-//    }
-
+    if (showDialog) {
+        IncomeDialog(
+            onDismiss = { showDialog = false },
+            onSave = { income ->
+                incomeViewModel.saveIncome(context, income)
+                showDialog = false
+            }
+        )
+    }
 }
 
-// -----------------------------
-// Optional: Insights Pie Chart Screen
-// -----------------------------
-//@Composable
-//fun InsightsScreen(viewModel: TransactionViewModel = viewModel()) {
-//    val categoryData = viewModel.categorySummary.collectAsState().value
-//    val totalExpense = viewModel.totalExpense.collectAsState().value
-//
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(16.dp)
-//    ) {
-//        Text(
-//            text = "Spending by Category",
-//            style = MaterialTheme.typography.titleLarge,
-//            fontWeight = FontWeight.Bold
-//        )
-//
-//        if (categoryData.isEmpty()) {
-//            Spacer(Modifier.height(16.dp))
-//            Text("No spending data available.")
-//        } else {
-//            categoryData.forEach { (category, amount) ->
-//                Text("$category: ₹${amount}", style = MaterialTheme.typography.bodyLarge)
-//            }
-//
-//            Spacer(Modifier.height(16.dp))
-//            Text("Total Spent: ₹$totalExpense", fontWeight = FontWeight.Bold)
-//        }
-//    }
-//}
 
 // -----------------------------
 // Placeholder for future tabs
