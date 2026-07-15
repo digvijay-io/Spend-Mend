@@ -60,7 +60,7 @@ fun LoginScreen(navController: NavController) {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Toast.makeText(context, "Login with Google Successful", Toast.LENGTH_SHORT).show()
-                            navController.navigate("home") { popUpTo("login") { inclusive = true } }
+                            navController.navigate("main") { popUpTo("login") { inclusive = true } }
                         } else {
                             Toast.makeText(context, "Google Sign-In Failed", Toast.LENGTH_SHORT).show()
                         }
@@ -131,8 +131,8 @@ fun LoginScreen(navController: NavController) {
                             isLoading = false
                             if (task.isSuccessful) {
                                 Toast.makeText(context, "Login Successful !!", Toast.LENGTH_SHORT).show()
-                                navController.navigate("success") {
-                                    popUpTo("success") { inclusive = true }
+                                navController.navigate("main") {
+                                    popUpTo("main") { inclusive = true }
                                 }
                             } else {
                                 Toast.makeText(context, "Login Failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()

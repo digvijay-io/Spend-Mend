@@ -48,6 +48,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.compose.foundation)
     // Core & Jetpack
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -114,10 +115,10 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
 
     // Room Database
-    // Room Database dependencies
-    implementation("androidx.room:room-runtime:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-runtime:2.7.2")
+    implementation("androidx.room:room-ktx:2.7.2")
+
+    kapt("androidx.room:room-compiler:2.7.2")
 
     // LiveData dependency
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")

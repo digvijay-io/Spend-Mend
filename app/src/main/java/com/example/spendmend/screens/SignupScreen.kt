@@ -78,7 +78,7 @@ fun SignupScreen(navController: NavController) {
                                 isLoading = false
                                 if (task.isSuccessful) {
                                     Toast.makeText(context, "Signup Successful!", Toast.LENGTH_SHORT).show()
-                                    navController.navigate("success") {
+                                    navController.navigate("main") {
                                         popUpTo("signup") { inclusive = true }
                                     }
                                 } else {
