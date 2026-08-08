@@ -3,39 +3,48 @@ package com.example.spendmend.screens.onboarding.data
 import com.example.spendmend.R
 import com.example.spendmend.screens.onboarding.model.OnboardingItem
 
-object WalkthroughData {
+val onboardingItems = listOf(
 
-    val pages = listOf(
+    OnboardingItem(
 
-        OnboardingItem(
+        title = "Automated Tracking",
 
-            image = R.drawable.walkthrough_1,
+        description = "Track expenses without lifting a finger. SpendMend automatically reads financial SMS to keep your records updated.",
 
-            title = "Track Every Rupee",
+        image = R.drawable.onboarding_wallet,
 
-            description =
-                "Automatically organize your expenses and understand where your money goes."
-        ),
+        buttonText = "Next"
 
-        OnboardingItem(
+    ),
 
-            image = R.drawable.walkthrough_2,
+    OnboardingItem(
 
-            title = "Create Smart Budgets",
+        title = "Smart Categorization",
 
-            description =
-                "Set monthly budgets, control spending, and achieve your financial goals."
-        ),
+        description = "SpendMend intelligently organizes your expenses into categories like food, travel, bills and shopping so you always know where your money goes.",
 
-        OnboardingItem(
+        image = R.drawable.onboarding_ai,
 
-            image = R.drawable.walkthrough_3,
+        buttonText = "Next",
 
-            title = "AI Powered Insights",
+        showAiChip = true,
 
-            description =
-                "Discover spending trends with intelligent charts and personalized insights."
-        )
+        aiChipText = "AI MAGIC"
+
+    ),
+
+    OnboardingItem(
+
+        title = "Financial Insights",
+
+        description = "Get AI-powered insights to monitor your spending, build healthier financial habits and confidently achieve your goals.",
+
+        image = R.drawable.onboarding_insights,
+
+        buttonText = "Get Started",
+
+        showSkip = false
 
     )
-}
+
+)

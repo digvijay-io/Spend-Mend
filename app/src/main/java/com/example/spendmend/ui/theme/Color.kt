@@ -2,6 +2,10 @@ package com.example.spendmend.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val PrimaryGreen = Color(0xFF239947)
+val PrimaryGreenDark = Color(0xFF1C7D3A)
+val LightGreen = Color(0xFFE9F7EE)
+
 val BrandGreen = Color(0xFF239947)
 val BrandGreenLight = Color(0xFFE8F5E9)
 val BrandGreenDark = Color(0xFF1B5E20)

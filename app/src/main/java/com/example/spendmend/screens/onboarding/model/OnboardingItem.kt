@@ -1,10 +1,22 @@
 package com.example.spendmend.screens.onboarding.model
 
-data class OnboardingItem(
+import androidx.annotation.DrawableRes
 
-    val image: Int,
+data class OnboardingItem(
 
     val title: String,
 
-    val description: String
+    val description: String,
+
+    @DrawableRes
+    val image: Int,
+
+    val buttonText: String,
+
+    val showAiChip: Boolean = false,
+
+    val aiChipText: String = "",
+
+    val showSkip: Boolean = true
+
 )

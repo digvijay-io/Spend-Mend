@@ -4,13 +4,17 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.spendmend.data.Converters
+import com.example.spendmend.data.GoalDao
+import com.example.spendmend.data.model.Goal
 
 @androidx.room.Database(
     entities = [
         Transaction::class,
-        Budget::class
+        Budget::class,
+        Goal::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -19,6 +23,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun transactionDao(): TransactionDao
 
     abstract fun budgetDao(): BudgetDao
+
+    abstract fun goalDao(): GoalDao
 
     companion object {
 

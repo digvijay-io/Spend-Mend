@@ -5,6 +5,8 @@ import com.example.spendmend.data.model.Bank
 import com.example.spendmend.data.model.Category
 import com.example.spendmend.data.model.PaymentMethod
 import com.example.spendmend.data.model.TransactionType
+import com.example.spendmend.data.model.GoalCategory
+import com.example.spendmend.data.model.GoalPriority
 
 class Converters {
 
@@ -35,4 +37,24 @@ class Converters {
     @TypeConverter
     fun toBank(value: String): Bank =
         Bank.valueOf(value)
+
+    @TypeConverter
+    fun fromGoalCategory(category: GoalCategory): String {
+        return category.name
+    }
+
+    @TypeConverter
+    fun toGoalCategory(value: String): GoalCategory {
+        return GoalCategory.valueOf(value)
+    }
+
+    @TypeConverter
+    fun fromPriority(priority: GoalPriority): String {
+        return priority.name
+    }
+
+    @TypeConverter
+    fun toPriority(value: String): GoalPriority {
+        return GoalPriority.valueOf(value)
+    }
 }

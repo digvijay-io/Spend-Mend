@@ -1,68 +1,89 @@
 package com.example.spendmend.screens
 
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Analytics
+import androidx.compose.material.icons.rounded.Flag
 import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Notifications
+import androidx.compose.material.icons.rounded.ReceiptLong
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import com.example.spendmend.ui.theme.BrandGreen
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+
 
 sealed class BottomNavItem(
     val route: String,
     val title: String,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector
+    val icon: ImageVector
 ) {
 
-    data object Home : BottomNavItem(
+    object Home : BottomNavItem(
         "home",
         "Home",
         Icons.Rounded.Home
     )
 
-    data object Insights : BottomNavItem(
-        "insights",
-        "Insights",
+    object Analytics : BottomNavItem(
+        "analytics",
+        "Analytics",
         Icons.Rounded.Analytics
     )
 
-    data object Notifications : BottomNavItem(
-        "notifications",
-        "Notifications",
-        Icons.Rounded.Notifications
+    object History : BottomNavItem(
+        "history",
+        "History",
+        Icons.Rounded.ReceiptLong
     )
 
-    data object Settings : BottomNavItem(
+    object Goals : BottomNavItem(
+        "goals",
+        "Goals",
+        Icons.Rounded.Flag
+    )
+
+    object Settings : BottomNavItem(
         "settings",
         "Settings",
         Icons.Rounded.Settings
@@ -74,9 +95,11 @@ private val bottomItems = listOf(
 
     BottomNavItem.Home,
 
-    BottomNavItem.Insights,
+    BottomNavItem.Analytics,
 
-    BottomNavItem.Notifications,
+    BottomNavItem.History,
+
+    BottomNavItem.Goals,
 
     BottomNavItem.Settings
 
@@ -87,39 +110,74 @@ fun MainBottomNavScreen() {
 
     val navController = rememberNavController()
 
-    Scaffold(
+    var bottomBarVisible by remember {
+        mutableStateOf(true)
+    }
 
-        modifier = Modifier.fillMaxSize(),
+        Scaffold(
 
-        bottomBar = {
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF6F7FB)),
 
-            SpendMendBottomBar(
+            containerColor = Color(0xFFF6F7FB),
+
+            bottomBar = {
+
+                AnimatedVisibility(
+
+                    visible = bottomBarVisible,
+
+                    enter = slideInVertically(
+                        initialOffsetY = { it }
+                    ) + fadeIn(),
+
+                    exit = slideOutVertically(
+                        targetOffsetY = { it }
+                    ) + fadeOut()
+
+                ) {
+
+                    SpendMendBottomBar(
+
+                        navController = navController,
+
+                        items = bottomItems
+
+                    )
+
+                }
+
+            }
+
+        ) { padding ->
+
+            MainNavigationGraph(
+
                 navController = navController,
-                items = bottomItems
-            )
 
+                padding = padding,
+
+                onBottomBarVisibilityChanged = {
+
+                    bottomBarVisible = it
+
+                }
+
+            )
         }
 
-    ) { padding ->
-
-        MainNavigationGraph(
-
-            navController = navController,
-
-            padding = padding
-
-        )
-
-    }
 
 }
 
 @Composable
 private fun MainNavigationGraph(
 
-    navController: androidx.navigation.NavHostController,
+    navController: NavHostController,
 
-    padding: PaddingValues
+    padding: PaddingValues,
+
+    onBottomBarVisibilityChanged: (Boolean) -> Unit
 
 ) {
 
@@ -137,19 +195,36 @@ private fun MainNavigationGraph(
 
         composable(BottomNavItem.Home.route) {
 
-            HomeScreen()
+            HomeScreen(
+                navController = navController,
+                onBottomBarVisibilityChanged = onBottomBarVisibilityChanged
+            )
 
         }
 
-        composable(BottomNavItem.Insights.route) {
+        composable(BottomNavItem.Analytics.route) {
 
-            InsightsScreen()
+            InsightsScreen(
+                onBottomBarVisibilityChanged = onBottomBarVisibilityChanged
+            )
 
         }
 
-        composable(BottomNavItem.Notifications.route) {
+        composable(BottomNavItem.History.route) {
 
-            NotificationScreen()
+            TransactionScreen(
+                onBottomBarVisibilityChanged = onBottomBarVisibilityChanged
+            )
+
+        }
+
+        composable(BottomNavItem.Goals.route) {
+
+            GoalsScreen(
+                onGoalClick = {},
+                onEditGoal = {},
+                onBottomBarVisibilityChanged = onBottomBarVisibilityChanged
+            )
 
         }
 
@@ -163,31 +238,16 @@ private fun MainNavigationGraph(
 
 }
 
-@Composable
-private fun NotificationScreen() {
-
-    androidx.compose.foundation.layout.Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = androidx.compose.ui.Alignment.Center
-    ) {
-
-        androidx.compose.material3.Text(
-            "Notifications"
-        )
-
-    }
-
-}
 
 @Composable
 private fun SettingsScreen() {
 
-    androidx.compose.foundation.layout.Box(
+    Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = androidx.compose.ui.Alignment.Center
+        contentAlignment = Alignment.Center
     ) {
 
-        androidx.compose.material3.Text(
+        Text(
             "Settings"
         )
 
@@ -197,74 +257,52 @@ private fun SettingsScreen() {
 
 @Composable
 private fun SpendMendBottomBar(
-    navController: androidx.navigation.NavHostController,
+    navController: NavHostController,
     items: List<BottomNavItem>
 ) {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
-    val currentRoute =
-        navBackStackEntry
-            ?.destination
-            ?.route
-
-    Box(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(bottom = 16.dp),
-        contentAlignment = Alignment.Center
+            .padding(horizontal = 20.dp, vertical = 12.dp),
+        shape = RoundedCornerShape(38.dp),
+        color = Color.White,
+        shadowElevation = 8.dp,
+        tonalElevation = 3.dp
     ) {
 
-        Surface(
-
-            tonalElevation = 6.dp,
-
-            shadowElevation = 12.dp,
-
-            shape = RoundedCornerShape(32.dp),
-
-            color = Color.White
-
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = 8.dp,
+                    vertical = 8.dp
+                ),
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Row(
+            items.forEach { item ->
 
-                modifier = Modifier
-                    .padding(
-                        horizontal = 12.dp,
-                        vertical = 10.dp
-                    ),
+                BottomBarItem(
+                    modifier = Modifier.weight(1f),
+                    item = item,
+                    selected = currentRoute == item.route
+                ) {
 
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    if (currentRoute != item.route) {
 
-            ) {
+                        navController.navigate(item.route) {
 
-                items.forEach { item ->
-
-                    BottomBarItem(
-
-                        selected = currentRoute == item.route,
-
-                        item = item
-
-                    ) {
-
-                        if (currentRoute != item.route) {
-
-                            navController.navigate(item.route) {
-
-                                popUpTo(navController.graph.startDestinationId) {
-
-                                    saveState = true
-
-                                }
-
-                                launchSingleTop = true
-
-                                restoreState = true
-
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
                             }
+
+                            launchSingleTop = true
+                            restoreState = true
 
                         }
 
@@ -280,87 +318,100 @@ private fun SpendMendBottomBar(
 
 }
 
+
 @Composable
 private fun BottomBarItem(
-
-    selected: Boolean,
-
+    modifier: Modifier = Modifier,
     item: BottomNavItem,
-
+    selected: Boolean,
     onClick: () -> Unit
-
 ) {
 
-    val width by animateDpAsState(
-
-        targetValue =
-            if (selected)
-                56.dp
-            else
-                44.dp,
-
+    val pillColor by animateColorAsState(
+        targetValue = if (selected) BrandGreen else Color.Transparent,
         label = ""
-
-    )
-
-    val background by animateColorAsState(
-
-        targetValue =
-            if (selected)
-                Color(0xFF239947)
-            else
-                Color.Transparent,
-
-        label = ""
-
     )
 
     val iconColor by animateColorAsState(
-
-        targetValue =
-            if (selected)
-                Color.White
-            else
-                Color.Gray,
-
+        targetValue = if (selected) Color.White else Color(0xFF757575),
         label = ""
+    )
 
+    val textColor by animateColorAsState(
+        targetValue = if (selected) Color.White else Color(0xFF757575),
+        label = ""
     )
 
     Box(
-
-        modifier = Modifier
-
-            .widthIn(min = width)
-
-            .height(48.dp)
-
-            .clip(CircleShape)
-
-            .background(background)
-
-            .clickable {
-
+        modifier = modifier
+            .height(64.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
                 onClick()
-
             },
-
         contentAlignment = Alignment.Center
-
     ) {
 
-        Icon(
+        if (selected) {
 
-            imageVector = item.icon,
+            Surface(
+                modifier = Modifier
+                    .width(72.dp)
+                    .height(56.dp),
+                color = BrandGreen,
+                shape = RoundedCornerShape(50.dp)
+            ) {
 
-            contentDescription = item.title,
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
 
-            tint = iconColor,
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = item.title,
+                        tint = iconColor,
+                        modifier = Modifier.size(22.dp)
+                    )
 
-            modifier = Modifier.size(24.dp)
+                    Spacer(modifier = Modifier.height(2.dp))
 
-        )
+                    Text(
+                        text = item.title,
+                        color = textColor,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1
+                    )
+                }
+            }
+        } else {
 
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                Icon(
+                    imageVector = item.icon,
+                    contentDescription = item.title,
+                    tint = iconColor,
+                    modifier = Modifier.size(24.dp)
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = item.title,
+                    color = Color(0xFF757575),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1
+                )
+            }
+        }
     }
-
 }
